@@ -220,6 +220,18 @@ export class AddEditComponent {
 
     !nextStartHour ? (nextStartHour = 24) : nextStartHour++;
 
+    if (this.addEditForm.get('differentStart')?.value) {
+      const differenceHour = +this.addEditForm.get('differentStartHourValue')
+        ?.value;
+      const differenceMinute = +this.addEditForm.get(
+        'differentStartMinuteValue',
+      )?.value;
+      if (nextStartMinute - differenceMinute < 0) {
+        nextStartHour--;
+      }
+      nextStartHour -= differenceHour;
+    }
+
     return Array.from(
       { length: nextStartHour - currentStartHour },
       (_, i) => currentStartHour + i,
@@ -227,13 +239,88 @@ export class AddEditComponent {
   }
 
   getMinuteEndSlots(day: string, index: number): number[] {
-    const startHour = this['slots' + day][index].startHour;
-    const endHour = this['slots' + day][index].endHour;
-    if (endHour > startHour) {
-      return Array.from({ length: 60 }, (_, i) => i);
+    const previousEndHour = this['slots' + day][index - 1]?.endHour;
+    const previousEndMinute = this['slots' + day][index - 1]?.endMinute;
+    const currentStartHour = this['slots' + day][index]?.startHour;
+    let currentStartMinute = this['slots' + day][index]?.startMinute;
+    const currentEndHour = this['slots' + day][index]?.endHour;
+    let currentEndMinute = 60;
+    let nextStartHour = this['slots' + day][index + 1]?.startHour;
+    let nextStartMinute = this['slots' + day][index + 1]?.startMinute;
+
+    if (currentStartHour !== currentEndHour) {
+      currentStartMinute = 0;
+    } else {
+      currentStartMinute++;
     }
-    let startMinute = this['slots' + day][index].startMinute + 1;
-    return Array.from({ length: 60 - startMinute }, (_, i) => startMinute + i);
+    if (nextStartHour) {
+      if (this.addEditForm.get('differentStart')?.value) {
+        const differenceHour = +this.addEditForm.get('differentStartHourValue')
+          ?.value;
+        const differenceMinute = +this.addEditForm.get(
+          'differentStartMinuteValue',
+        )?.value;
+        if (nextStartMinute - differenceMinute < 0) {
+          nextStartHour--;
+        }
+        nextStartHour -= differenceHour;
+        if (nextStartHour === currentEndHour && nextStartMinute) {
+          currentEndMinute =
+            ((nextStartMinute - differenceMinute + 60) % 60) + 1;
+        } else {
+          currentEndMinute = 59;
+        }
+      } else {
+        if (nextStartHour === currentEndHour && nextStartMinute) {
+          currentEndMinute = nextStartMinute;
+        } else {
+          currentEndMinute = 59;
+        }
+      }
+    }
+
+    return Array.from(
+      { length: currentEndMinute - currentStartMinute },
+      (_, i) => currentStartMinute + i,
+    );
+
+    // if (currentEndHour > currentStartHour && !nextStartHour) {
+    //   return Array.from({ length: 60 }, (_, i) => i);
+    // }
+    //
+    // if (currentEndHour === currentStartHour && !nextStartHour) {
+    //   return Array.from(
+    //     { length: 59 - currentStartMinute },
+    //     (_, i) => currentStartMinute + 1 + i,
+    //   );
+    // }
+    //
+    // !nextStartHour ? (nextStartHour = 24) : nextStartHour++;
+    //
+    // if (this.addEditForm.get('differentStart')?.value) {
+    //   const differenceHour = +this.addEditForm.get('differentStartHourValue')
+    //     ?.value;
+    //   const differenceMinute = +this.addEditForm.get(
+    //     'differentStartMinuteValue',
+    //   )?.value;
+    //   if (nextStartMinute && nextStartMinute - differenceMinute < 0) {
+    //     nextStartHour--;
+    //   }
+    //   nextStartHour -= differenceHour;
+    //   if (nextStartHour === currentEndHour - 1 && nextStartMinute) {
+    //     currentEndMinute = (nextStartMinute - differenceMinute + 60) % 60;
+    //   }
+    //   console.log(`${currentEndHour} - ${nextStartHour}`);
+    // }
+    //
+    // if (nextStartHour === currentEndHour - 2 && nextStartMinute) {
+    //   currentEndMinute = nextStartMinute;
+    // }
+    // console.log(`${currentEndHour} - ${nextStartHour}`);
+    //
+    // currentEndHour > currentStartHour ? (currentStartMinute = 0) : null;
+    //
+    //
   }
   // protected readonly length = length;
 }
