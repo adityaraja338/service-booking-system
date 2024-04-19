@@ -1,0 +1,164 @@
+<form [formGroup]="addEditForm" nz-form>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor="name">Name</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <input
+        formControlName="name"
+        name="name"
+        nz-input
+        placeholder="Service Name"
+        type="text"
+      />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6">Duration</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <label>Day</label>
+      <nz-select
+        formControlName="durationDay"
+        nzAllowClear
+        nzPlaceHolder="Select days"
+        nzShowSearch
+      >
+        <nz-option
+          *ngFor="let day of days"
+          [nzLabel]="day"
+          [nzValue]="day"
+        ></nz-option>
+      </nz-select>
+      <label>Hour</label>
+      <nz-select
+        formControlName="durationHour"
+        nzAllowClear
+        nzPlaceHolder="Select hours"
+        nzShowSearch
+      >
+        <nz-option
+          *ngFor="let hour of hours"
+          [nzLabel]="hour"
+          [nzValue]="hour"
+        ></nz-option>
+      </nz-select>
+      <label>Minute</label>
+      <nz-select
+        formControlName="durationMinute"
+        nzAllowClear
+        nzPlaceHolder="Select minutes"
+        nzShowSearch
+      >
+        <nz-option
+          *ngFor="let minute of minutes"
+          [nzLabel]="minute"
+          [nzValue]="minute"
+        ></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6">Price</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <nz-input-number
+        [nzMin]="0"
+        [nzStep]="1"
+        formControlName="price"
+        nzPlaceHolder="Enter Price"
+        style="width: 100%"
+      ></nz-input-number>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6"></nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <label formControlName="differentStart" nz-checkbox
+        >Difference between starting time of slots</label
+      >
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item *ngIf="addEditForm?.get('differentStart')?.value">
+    <nz-form-label [nzSpan]="6">Time Difference</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <nz-input-number
+        [nzMin]="0"
+        [nzStep]="1"
+        formControlName="differentStartHourValue"
+        nzPlaceHolder="Enter difference hours"
+        style="width: 100%"
+      ></nz-input-number>
+      <nz-input-number
+        [nzMin]="0"
+        [nzStep]="1"
+        formControlName="differentStartMinuteValue"
+        nzPlaceHolder="Enter difference minutes"
+        style="width: 100%"
+      ></nz-input-number>
+    </nz-form-control>
+  </nz-form-item>
+  <div class="weekday" formArrayName="sundaySlots">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">Sunday</nz-form-label>
+      <nz-form-control>
+        <div
+          *ngFor="let item of sundaySlots?.controls; let i = index"
+          [formGroupName]="i"
+          style="width: 100%"
+        >
+          <nz-select
+            [(ngModel)]="slotsSunday[i].startHour"
+            [nzShowArrow]="false"
+            formControlName="startHour"
+            nzPlaceHolder="00"
+            style="width: 64px"
+          >
+            <nz-option
+              *ngFor="let hour of getHourStartSlots('Sunday', i)"
+              [nzLabel]="hour"
+              [nzValue]="hour"
+            ></nz-option>
+          </nz-select>
+          <nz-select
+            [(ngModel)]="slotsSunday[i].startMinute"
+            [nzShowArrow]="false"
+            formControlName="startMinute"
+            nzPlaceHolder="00"
+            style="width: 64px"
+          >
+            <nz-option
+              *ngFor="let minute of getMinuteStartSlots('Sunday', i)"
+              [nzLabel]="minute"
+              [nzValue]="minute"
+            ></nz-option>
+          </nz-select>
+          <span> - </span>
+          <nz-select
+            [(ngModel)]="slotsSunday[i].endHour"
+            [nzShowArrow]="false"
+            formControlName="endHour"
+            nzPlaceHolder="00"
+            style="width: 64px"
+          >
+            <nz-option
+              *ngFor="let hour of getHourEndSlots('Sunday', i)"
+              [nzLabel]="hour"
+              [nzValue]="hour"
+            ></nz-option>
+          </nz-select>
+          <nz-select
+            [(ngModel)]="slotsSunday[i].endMinute"
+            [nzShowArrow]="false"
+            formControlName="endMinute"
+            nzPlaceHolder="00"
+            style="width: 64px"
+          >
+            <nz-option
+              *ngFor="let minute of getMinuteEndSlots('Sunday', i)"
+              [nzLabel]="minute"
+              [nzValue]="minute"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <button (click)="addSundaySlot()" type="button">Add</button>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</form>
