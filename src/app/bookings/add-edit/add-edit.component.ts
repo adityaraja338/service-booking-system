@@ -17,27 +17,6 @@ export class AddEditComponent {
   minutes: number[] = [];
 
   slotsSunday: any = [];
-  minHour: any = {
-    Sunday: 0,
-    Monday: 0,
-    Tuesday: 0,
-    Wednesday: 0,
-    Thursday: 0,
-    Friday: 0,
-    Saturday: 0,
-  };
-  minMinute: any = {
-    Sunday: 0,
-    Monday: 0,
-    Tuesday: 0,
-    Wednesday: 0,
-    Thursday: 0,
-    Friday: 0,
-    Saturday: 0,
-  };
-  // };
-  protected readonly Array = Array;
-  protected readonly from = from;
 
   constructor(
     private fb: FormBuilder,
@@ -96,74 +75,66 @@ export class AddEditComponent {
   }
 
   getHourStartSlots(day: string, index: number): number[] {
-    // If it's a first slot
-    if (index === 0) {
-      if (this['slots' + day][index]?.endHour) {
-        return Array.from(
-          { length: this['slots' + day][index]?.endHour + 1 },
-          (_, i) => i,
-        );
-      } else {
-        return Array.from({ length: 24 }, (_, i) => i);
-      }
-    }
-    // If it's a slot other than first
-    else {
-      let previousEndHour = this['slots' + day][index - 1]?.endHour;
-      const previousEndMinute = +this['slots' + day][index - 1]?.endMinute;
+    let previousEndHour = this['slots' + day][index - 1]?.endHour;
+    const previousEndMinute = this['slots' + day][index - 1]?.endMinute;
+    let currentEndHour = this['slots' + day][index]?.endHour;
 
-      // If there's a difference between starting of slots
+    // If current slot's end hour doesn't exist then we set end hour as 24
+    // Or else we increase end hour
+    !currentEndHour ? (currentEndHour = 24) : currentEndHour++;
+
+    // If there's a previous end hour signifying that there is a previous slot
+    if (previousEndHour) {
+      // If the time difference is there
       if (this.addEditForm.get('differentStart')?.value) {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
           'differentStartMinuteValue',
         )?.value;
+
+        // If previous slot's end minute with time difference calculated is
+        // greater than 60 we increase the previous slot's end hour by 1
         if (previousEndMinute + differenceMinute > 60) {
           previousEndHour++;
         }
+
+        // Increasing the previous slot's end hour as per time difference
         previousEndHour += differenceHour;
       } else {
-        if (previousEndMinute === 59) {
-          previousEndHour++;
-        }
+        // If no time difference is there then we check for the previous slot's
+        // end minute if it is 59 then we increase the previous end hour
+        previousEndMinute === 59 ? previousEndHour++ : null;
       }
-
-      let currentEndHour = 23;
-      if (this['slots' + day][index]?.endHour) {
-        // If current slot has an end hour set
-        currentEndHour = this['slots' + day][index]?.endHour;
-      }
-
-      return Array.from(
-        {
-          length: currentEndHour - previousEndHour + 1,
-        },
-        (_, i) => previousEndHour + i,
-      );
+    } else {
+      // If there's no previous end hour, then it signifies that there's
+      // no previous slot so we can take previous end hour as 0
+      previousEndHour = 0;
     }
+
+    return Array.from(
+      { length: currentEndHour - previousEndHour },
+      (_, i) => previousEndHour + i,
+    );
   }
 
   getMinuteStartSlots(day: string, index: number): number[] {
-    // If it's a first slot
-    if (index === 0) {
-      const currentStartHour = +this['slots' + day][index]?.startHour;
-      const currentEndHour = +this['slots' + day][index]?.endHour;
-      const currentEndMinute = +this['slots' + day][index]?.endMinute;
-      if (currentEndHour === currentStartHour && currentEndMinute) {
-        return Array.from({ length: currentEndMinute }, (_, i) => i);
-      } else {
-        return Array.from({ length: 60 }, (_, i) => i);
-      }
-    }
-    // If it's a slot other than first
-    else {
-      let previousEndHour = +this['slots' + day][index - 1]?.endHour;
-      let previousEndMinute = +this['slots' + day][index - 1]?.endMinute;
-      const currentStartHour = +this['slots' + day][index]?.startHour;
-      const currentEndHour = +this['slots' + day][index]?.endHour;
-      let currentEndMinute = +this['slots' + day][index]?.endMinute;
+    let previousEndHour = +this['slots' + day][index - 1]?.endHour;
+    let previousEndMinute = +this['slots' + day][index - 1]?.endMinute;
+    const currentStartHour = +this['slots' + day][index]?.startHour;
+    const currentEndHour = +this['slots' + day][index]?.endHour;
+    let currentEndMinute = +this['slots' + day][index]?.endMinute;
 
+    // If current slot's end hour is not equal to start hour
+    // Or current slot's end minute is not set then
+    // we set current slot's end minute as 60
+    currentStartHour !== currentEndHour || !currentEndMinute
+      ? (currentEndMinute = 60)
+      : null;
+
+    // If previous slot exists
+    if (previousEndHour) {
+      // If time difference is there
       if (this.addEditForm.get('differentStart')?.value) {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
@@ -171,46 +142,53 @@ export class AddEditComponent {
           'differentStartMinuteValue',
         )?.value;
 
-        previousEndHour += differenceHour;
-
-        if (differenceMinute + previousEndMinute > 60) {
+        // If previous slot's end minute with time difference calculated is
+        // greater than 60 we increase the previous slot's end hour by 1
+        if (previousEndMinute + differenceMinute > 60) {
           previousEndHour++;
         }
-        previousEndMinute = (differenceMinute + previousEndMinute) % 60;
-      }
 
-      if (currentStartHour < currentEndHour || !currentEndHour) {
-        if (currentStartHour > previousEndHour) {
-          return Array.from({ length: 60 }, (_, i) => i);
-        } else if (currentStartHour === previousEndHour) {
-          return Array.from(
-            { length: 59 - previousEndMinute },
-            (_, i) => previousEndMinute + 1 + i,
-          );
+        // Increasing the previous slot's end hour as per time difference
+        previousEndHour += differenceHour;
+
+        // If calculated previous slot's end hour is same as current slot's start
+        // hour then we set previous slot's end minute accordingly
+        if (previousEndHour === currentStartHour) {
+          previousEndMinute = (previousEndMinute + differenceMinute) % 60;
+        } else {
+          // Else we set previous slot's end minute as 0
+          previousEndMinute = 0;
         }
-      } else if (currentStartHour === currentEndHour) {
-        currentEndMinute = currentEndMinute ? currentEndMinute : 60;
-        if (currentStartHour > previousEndHour) {
-          return Array.from({ length: currentEndMinute }, (_, i) => i);
-        } else if (currentStartHour === previousEndHour) {
-          return Array.from(
-            { length: currentEndMinute - previousEndMinute - 1 },
-            (_, i) => previousEndMinute + 1 + i,
-          );
-        }
+      } else {
+        // If time difference is not there
+
+        // we check if previous slot's end hour is equal to current slot's
+        // start hour, then we increase previous slots's end minute by 1
+        // if it is not equal then we set previous slots's end minute as 0
+        previousEndHour === currentStartHour
+          ? previousEndMinute++
+          : (previousEndMinute = 0);
       }
+    } else {
+      // If previous slot doesn't exist we set previous slo's end minute as 0
+      previousEndMinute = 0;
     }
-    return [];
+
+    return Array.from(
+      { length: currentEndMinute - previousEndMinute },
+      (_, i) => previousEndMinute + i,
+    );
   }
 
   getHourEndSlots(day: string, index: number): number[] {
     let previousEndHour = this['slots' + day][index - 1]?.endHour;
     const previousEndMinute = this['slots' + day][index - 1]?.endMinute;
     let currentStartHour = this['slots' + day][index]?.startHour;
-    const currentStartMinute = this['slots' + day][index]?.startMinute;
     let nextStartHour = this['slots' + day][index + 1]?.startHour;
     const nextStartMinute = this['slots' + day][index + 1]?.startHour;
 
+    // If current slot's start hour is not set then we take
+    // previous slot's end hour as starting point
     if (!currentStartHour) {
       currentStartHour = previousEndHour ? previousEndHour : 0;
       if (previousEndMinute === 59) {
@@ -218,18 +196,28 @@ export class AddEditComponent {
       }
     }
 
-    !nextStartHour ? (nextStartHour = 24) : nextStartHour++;
+    // If the next slot's test hour is set then we take it as
+    // ending point or we take 23 as ending point
+    !nextStartHour ? (nextStartHour = 23) : null;
 
-    if (this.addEditForm.get('differentStart')?.value) {
-      const differenceHour = +this.addEditForm.get('differentStartHourValue')
-        ?.value;
-      const differenceMinute = +this.addEditForm.get(
-        'differentStartMinuteValue',
-      )?.value;
-      if (nextStartMinute - differenceMinute < 0) {
-        nextStartHour--;
+    if (nextStartHour) {
+      nextStartHour++;
+      // If there's time diffence set between slots
+      if (this.addEditForm.get('differentStart')?.value) {
+        const differenceHour = +this.addEditForm.get('differentStartHourValue')
+          ?.value;
+        const differenceMinute = +this.addEditForm.get(
+          'differentStartMinuteValue',
+        )?.value;
+
+        // Reducing the next start hour according to next slot minute difference
+        if (nextStartMinute - differenceMinute < 0) {
+          nextStartHour--;
+        }
+
+        // Reducing the next start hour according to next slot with difference
+        nextStartHour -= differenceHour;
       }
-      nextStartHour -= differenceHour;
     }
 
     return Array.from(
@@ -239,8 +227,6 @@ export class AddEditComponent {
   }
 
   getMinuteEndSlots(day: string, index: number): number[] {
-    const previousEndHour = this['slots' + day][index - 1]?.endHour;
-    const previousEndMinute = this['slots' + day][index - 1]?.endMinute;
     const currentStartHour = this['slots' + day][index]?.startHour;
     let currentStartMinute = this['slots' + day][index]?.startMinute;
     const currentEndHour = this['slots' + day][index]?.endHour;
@@ -248,33 +234,53 @@ export class AddEditComponent {
     let nextStartHour = this['slots' + day][index + 1]?.startHour;
     let nextStartMinute = this['slots' + day][index + 1]?.startMinute;
 
-    if (currentStartHour !== currentEndHour) {
-      currentStartMinute = 0;
-    } else {
-      currentStartMinute++;
-    }
+    // Setting start minute according to the current slot start time
+    currentStartHour !== currentEndHour
+      ? (currentStartMinute = 0)
+      : currentStartMinute++;
+
+    // Checking if the next time is there and
+    // set ending point of current slot's end minute
     if (nextStartHour) {
+      // If there is difference between slots
       if (this.addEditForm.get('differentStart')?.value) {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
           'differentStartMinuteValue',
         )?.value;
+
+        // Reducing the next start hour according to next slot minute difference
         if (nextStartMinute - differenceMinute < 0) {
           nextStartHour--;
         }
+
+        // Reducing the next start hour according to next slot with difference
         nextStartHour -= differenceHour;
+
+        // If with the difference time calculated the current slot's end
+        // hour is same as next slot's start hour then we calculate the
+        // appropiate ending point of the current end minute
         if (nextStartHour === currentEndHour && nextStartMinute) {
           currentEndMinute =
             ((nextStartMinute - differenceMinute + 60) % 60) + 1;
+          // ((20-50)+60)%60 +1 = 31
         } else {
-          currentEndMinute = 59;
+          // If the there is still difference or start minute of next slot
+          // is not present then we can take 60 as last value
+          currentEndMinute = 60;
         }
-      } else {
+      }
+      // If there's no difference in time slots
+      else {
+        // If the start hour of next slot is same as end hour of
+        // current slot and there is start minute for next slot
         if (nextStartHour === currentEndHour && nextStartMinute) {
           currentEndMinute = nextStartMinute;
         } else {
-          currentEndMinute = 59;
+          // If the there is still difference or start minute of next slot
+          // is not present then we can take 60 as last value
+          currentEndMinute = 60;
         }
       }
     }
@@ -283,44 +289,6 @@ export class AddEditComponent {
       { length: currentEndMinute - currentStartMinute },
       (_, i) => currentStartMinute + i,
     );
-
-    // if (currentEndHour > currentStartHour && !nextStartHour) {
-    //   return Array.from({ length: 60 }, (_, i) => i);
-    // }
-    //
-    // if (currentEndHour === currentStartHour && !nextStartHour) {
-    //   return Array.from(
-    //     { length: 59 - currentStartMinute },
-    //     (_, i) => currentStartMinute + 1 + i,
-    //   );
-    // }
-    //
-    // !nextStartHour ? (nextStartHour = 24) : nextStartHour++;
-    //
-    // if (this.addEditForm.get('differentStart')?.value) {
-    //   const differenceHour = +this.addEditForm.get('differentStartHourValue')
-    //     ?.value;
-    //   const differenceMinute = +this.addEditForm.get(
-    //     'differentStartMinuteValue',
-    //   )?.value;
-    //   if (nextStartMinute && nextStartMinute - differenceMinute < 0) {
-    //     nextStartHour--;
-    //   }
-    //   nextStartHour -= differenceHour;
-    //   if (nextStartHour === currentEndHour - 1 && nextStartMinute) {
-    //     currentEndMinute = (nextStartMinute - differenceMinute + 60) % 60;
-    //   }
-    //   console.log(`${currentEndHour} - ${nextStartHour}`);
-    // }
-    //
-    // if (nextStartHour === currentEndHour - 2 && nextStartMinute) {
-    //   currentEndMinute = nextStartMinute;
-    // }
-    // console.log(`${currentEndHour} - ${nextStartHour}`);
-    //
-    // currentEndHour > currentStartHour ? (currentStartMinute = 0) : null;
-    //
-    //
   }
   // protected readonly length = length;
 }
