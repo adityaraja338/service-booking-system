@@ -17,6 +17,12 @@ export class AddEditComponent {
   minutes: number[] = [];
 
   slotsSunday: any = [];
+  slotsMonday: any = [];
+  slotsTuesday: any = [];
+  slotsWednesday: any = [];
+  slotsThursday: any = [];
+  slotsFriday: any = [];
+  slotsSaturday: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -39,6 +45,26 @@ export class AddEditComponent {
       ],
       multipleSlots: [false, Validators.required],
       sundaySlots: this.fb.array([]),
+      isSundayHoliday: [false],
+      isSunday24: [false],
+      mondaySlots: this.fb.array([]),
+      isMondayHoliday: [false],
+      isMonday24: [false],
+      tuesdaySlots: this.fb.array([]),
+      isTuesdayHoliday: [false],
+      isTuesday24: [false],
+      wednesdaySlots: this.fb.array([]),
+      isWednesdayHoliday: [false],
+      isWednesday24: [false],
+      thursdaySlots: this.fb.array([]),
+      isThursdayHoliday: [false],
+      isThursday24: [false],
+      fridaySlots: this.fb.array([]),
+      isFridayHoliday: [false],
+      isFriday24: [false],
+      saturdaySlots: this.fb.array([]),
+      isSaturdayHoliday: [false],
+      isSaturday24: [false],
     });
     this.days = Array.from({ length: 31 }, (_, i) => i);
     this.hours = Array.from({ length: 24 }, (_, i) => i);
@@ -49,12 +75,267 @@ export class AddEditComponent {
     return this.addEditForm.get('sundaySlots') as FormArray;
   }
 
-  addSundaySlot() {
-    // this.sundaySlots.length;
-    // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-    let previousSlot = this.sundaySlots?.at(this.sundaySlots.length - 1);
+  get mondaySlots(): FormArray {
+    return this.addEditForm.get('mondaySlots') as FormArray;
+  }
+
+  get tuesdaySlots(): FormArray {
+    return this.addEditForm.get('tuesdaySlots') as FormArray;
+  }
+
+  get wednesdaySlots(): FormArray {
+    return this.addEditForm.get('wednesdaySlots') as FormArray;
+  }
+
+  get thursdaySlots(): FormArray {
+    return this.addEditForm.get('thursdaySlots') as FormArray;
+  }
+
+  get fridaySlots(): FormArray {
+    return this.addEditForm.get('fridaySlots') as FormArray;
+  }
+
+  get saturdaySlots(): FormArray {
+    return this.addEditForm.get('saturdaySlots') as FormArray;
+  }
+
+  // addSundaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.sundaySlots?.at(this.sundaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsSunday[this.slotsSunday.length - 1]?.endHour === 23 &&
+  //       this.slotsSunday[this.slotsSunday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.sundaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsSunday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addMondaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.mondaySlots?.at(this.mondaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsMonday[this.slotsMonday.length - 1]?.endHour === 23 &&
+  //       this.slotsMonday[this.slotsMonday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.mondaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsMonday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addTuesdaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.tuesdaySlots?.at(this.tuesdaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsTuesday[this.slotsTuesday.length - 1]?.endHour === 23 &&
+  //       this.slotsTuesday[this.slotsTuesday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.tuesdaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsTuesday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addWednesdaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.wednesdaySlots?.at(this.wednesdaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsWednesday[this.slotsWednesday.length - 1]?.endHour === 23 &&
+  //       this.slotsWednesday[this.slotsWednesday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.wednesdaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsWednesday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addThursdaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.thursdaySlots?.at(this.thursdaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsThursday[this.slotsThursday.length - 1]?.endHour === 23 &&
+  //       this.slotsThursday[this.slotsThursday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.thursdaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsThursday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addFridaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.fridaySlots?.at(this.fridaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsFriday[this.slotsFriday.length - 1]?.endHour === 23 &&
+  //       this.slotsFriday[this.slotsFriday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.fridaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsFriday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+  //
+  // addSaturdaySlot() {
+  //   // this.sundaySlots.length;
+  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
+  //   let previousSlot = this.saturdaySlots?.at(this.saturdaySlots.length - 1);
+  //   if (!previousSlot || previousSlot?.valid) {
+  //     if (
+  //       this.slotsSaturday[this.slotsSaturday.length - 1]?.endHour === 23 &&
+  //       this.slotsSaturday[this.slotsSaturday.length - 1]?.endMinute === 59
+  //     ) {
+  //       this.message.error('Cannot add slot after 23:59!');
+  //       return;
+  //     }
+  //     this.saturdaySlots.push(
+  //       this.fb.group({
+  //         startHour: [null, Validators.required],
+  //         startMinute: [null, Validators.required],
+  //         endHour: [null, Validators.required],
+  //         endMinute: [null, Validators.required],
+  //       }),
+  //     );
+  //     this.slotsSaturday.push({
+  //       startHour: null,
+  //       startMinute: null,
+  //       endHour: null,
+  //       endMinute: null,
+  //     });
+  //     // console.log(this.slotsSunday);
+  //   } else {
+  //     this.message.error('Fill the current slot details!');
+  //   }
+  // }
+
+  addSlot(day: string): void {
+    let previousSlot = this[day.toLowerCase() + 'Slots']?.at(
+      this[day.toLowerCase() + 'Slots'].length - 1,
+    );
     if (!previousSlot || previousSlot?.valid) {
-      this.sundaySlots.push(
+      if (
+        this['slots' + day][this['slots' + day].length - 1]?.endHour === 23 &&
+        this['slots' + day][this['slots' + day].length - 1]?.endMinute === 59
+      ) {
+        this.message.error('Cannot add slot after 23:59!');
+        return;
+      }
+      this[day.toLowerCase() + 'Slots']?.push(
         this.fb.group({
           startHour: [null, Validators.required],
           startMinute: [null, Validators.required],
@@ -62,7 +343,7 @@ export class AddEditComponent {
           endMinute: [null, Validators.required],
         }),
       );
-      this.slotsSunday.push({
+      this['slots' + day]?.push({
         startHour: null,
         startMinute: null,
         endHour: null,
@@ -290,5 +571,65 @@ export class AddEditComponent {
       (_, i) => currentStartMinute + i,
     );
   }
-  // protected readonly length = length;
+
+  deleteSlot(day: string, index: number): void {
+    this['slots' + day].splice(index, 1);
+    this[day.toLowerCase() + 'Slots'].removeAt(index);
+  }
+
+  setHoliday(day: string, event: any): void {
+    if (event) {
+      const is24True = this.addEditForm.get('is' + day + '24')?.value;
+      is24True
+        ? this.addEditForm.get('is' + day + '24')?.setValue(false)
+        : null;
+      this['slots' + day] = [];
+      this[day.toLowerCase() + 'Slots'].clear();
+    }
+  }
+
+  set24hours(day: string, event: any): void {
+    if (event) {
+      const isHolidayTrue = this.addEditForm.get('is' + day + 'Holiday')?.value;
+      isHolidayTrue
+        ? this.addEditForm.get('is' + day + 'Holiday')?.setValue(false)
+        : null;
+
+      this[day.toLowerCase() + 'Slots'].clear();
+      this[day.toLowerCase() + 'Slots'].push(
+        this.fb.group({
+          startHour: [0, Validators.required],
+          startMinute: [0, Validators.required],
+          endHour: [23, Validators.required],
+          endMinute: [59, Validators.required],
+        }),
+      );
+      this['slots' + day] = [
+        {
+          startHour: 0,
+          startMinute: 0,
+          endHour: 23,
+          endMinute: 59,
+        },
+      ];
+    } else {
+      this[day.toLowerCase() + 'Slots'].clear();
+      this[day.toLowerCase() + 'Slots'].push(
+        this.fb.group({
+          startHour: [null, Validators.required],
+          startMinute: [null, Validators.required],
+          endHour: [null, Validators.required],
+          endMinute: [null, Validators.required],
+        }),
+      );
+      this['slots' + day] = [
+        {
+          startHour: null,
+          startMinute: null,
+          endHour: null,
+          endMinute: null,
+        },
+      ];
+    }
+  }
 }

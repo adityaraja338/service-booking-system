@@ -1,1 +1,79 @@
 /* You can add global styles to this file, and also import other style files */
+@import url("../node_modules/ng-zorro-antd/src/ng-zorro-antd.min.css");
+@import url("../src/assets/scss/layouting.css");
+//@import url("../src/assets/scss/margin-padding.scss");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0;
+}
+
+button{
+  background: transparent;
+  border:none;
+  &:hover{
+    cursor:pointer;
+  }
+}
+
+input.ant-input {
+  border-radius: 4px !important;
+}
+
+nz-select-top-control {
+  border-radius: 4px !important;
+}
+
+.ant-select {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+nz-input-number {
+  border-radius: 4px !important;
+  height: auto;
+  padding-top: 0.36rem;
+  padding-bottom: 0.36rem;
+  .ant-input-number-handler-wrap {
+    background: transparent;
+    right: 0.3rem;
+    .ant-input-number-handler {
+      border: none;
+    }
+  }
+}
+
+label{
+  line-height: normal !important;
+}
+
+nz-form-label{
+  label{
+    margin:0!important;
+  }
+}
+
+label.ant-checkbox-wrapper {
+  .ant-checkbox-inner {
+    border-radius: 4px;
+  }
+}
+
+.ant-checkbox-wrapper + .ant-checkbox-wrapper {
+  margin: 0 !important;
+}
+
+label.select-label {
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 0!important;
+}
+
+.ant-form-item{
+  margin: 0;
+}
