@@ -108,8 +108,10 @@ button{
 
 input{
   font-size: 12px;
+  height: 30px;
   &.ant-input {
     border-radius: 4px !important;
+    font-size: 12px;
   }
 }
 
@@ -161,6 +163,20 @@ label.ant-checkbox-wrapper {
   border-color: #1890ff;
 }
 
+.flatpickr-calendar.inline{
+  transform: scale(0.951);
+  top:-7px;
+  left: -7px;
+}
+
+@media (min-width:375px){
+  .flatpickr-calendar.inline{
+    transform: scale(0.951);
+    top:2px;
+    left: 0px;
+  }
+}
+
 label.select-label {
   font-size: 10px;
   font-weight: 600;
@@ -173,10 +189,41 @@ label.main-label {
   margin-bottom: 0;
 }
 
+.form-label-height label{
+  height: max-content
+}
+
 .ant-form-item{
   margin: 0;
 }
 
 .invisible{
   visibility: hidden;
+}
+
+.cancel-btn,.submit-btn{
+  padding: 4px 24px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.cancel-btn{
+  border-color: #ff5a5a;
+  color: #ff5a5a;
+  background-color: transparent;
+  transition: all 0.6s;
+  &:hover{
+    color: #d34a4a;
+  }
+  &:focus{
+    box-shadow: 0 0 2px 2px #ff5a5a55;
+  }
+}
+.submit-btn{
+  border-color: #1890ff;
+  background-color: #1890ff;
+  color: #fff;
+  transition: all 0.6s;
+  &:hover{
+    background-color: #1579d6;
+  }
 }
