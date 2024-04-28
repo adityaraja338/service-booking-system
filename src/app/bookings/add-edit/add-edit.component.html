@@ -166,7 +166,7 @@
       </div>
     </div>
 
-    <div *ngFor="let day of weekdays; index as index" class="weekdays sunday" [class.mt-3]="index !== 0">
+    <div *ngFor="let day of weekdays; index as index" class="weekdays" [class.mt-3]="index !== 0" [class]="day.toLowerCase()">
       <div class="ant-row">
         <div class="ant-col-xs-24 ant-col-md-20">
           <label>{{ day || '-'}}</label>
