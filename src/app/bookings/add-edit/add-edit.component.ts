@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
+import { FlatpickrDefaultsInterface } from 'angularx-flatpickr';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { from } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-add-edit',
@@ -34,7 +37,31 @@ export class AddEditComponent {
   slotsFriday: any = [];
   slotsSaturday: any = [];
 
-  constructor(private fb: FormBuilder, private message: NzMessageService) {
+  flatpickrOptions: FlatpickrDefaultsInterface={
+    enableTime: false,
+    mode: 'multiple',
+    inline: true,
+    convertModelValue:true,
+    altInput:true,
+    dateFormat: 'Y-m-d',
+    disable: [
+      (date: Date) => {
+        const today=new Date();
+        const dayOfWeek=date.getDay();
+        const day=this.getDayOfWeekName(dayOfWeek);
+
+        const isHoliday=this.addEditForm.get('is'+day+'Holiday')?.value;
+
+        return isHoliday || date < today;
+      }
+    ],
+  };
+
+  constructor(
+    private title: Title,
+    private fb: FormBuilder,
+    private message: NzMessageService
+  ) {
     this.addEditForm = this.fb.group({
       name: ['', Validators.required],
       durationDay: [0, Validators.required],
@@ -72,10 +99,16 @@ export class AddEditComponent {
       saturdaySlots: this.fb.array([]),
       isSaturdayHoliday: [false],
       isSaturday24: [false],
+      holidays: [],
     });
     this.days = Array.from({ length: 31 }, (_, i) => i);
     this.hours = Array.from({ length: 24 }, (_, i) => i);
     this.minutes = Array.from({ length: 60 }, (_, i) => i);
+    this.title.setTitle('Add Service');
+  }
+
+  getDayOfWeekName(index:number){
+    return this.weekdays[index];
   }
 
   get sundaySlots(): FormArray {
@@ -369,6 +402,7 @@ export class AddEditComponent {
       this['slots' + day] = [];
       this[day.toLowerCase() + 'Slots'].clear();
     }
+    this.setWeekdayOff();
   }
 
   set24hours(day: string, event: any): void {
@@ -414,5 +448,42 @@ export class AddEditComponent {
         },
       ];
     }
+  }
+
+  selectHoliday(event:any){
+    if(event?.selectedDates?.length >= 1){
+      const formattedDates:any=[];
+      event?.selectedDates.forEach((date:Date) => {
+        const formattedDate = moment(date).format('DD-MM-yyyy');
+        formattedDates.push(formattedDate);
+      });
+      this.addEditForm.get("holidays")?.patchValue(formattedDates);
+      // console.log(formattedDates);
+    } else {
+      this.addEditForm.get("holidays")?.reset();
+      // console.log(this.addEditForm.get("holidays")?.value);
+    }
+  }
+
+  setWeekdayOff(){
+    this.flatpickrOptions = {
+      enableTime: false,
+      mode: 'multiple',
+      inline: true,
+      convertModelValue:true,
+      altInput:true,
+      dateFormat: 'Y-m-d',
+      disable: [
+        (date: Date) => {
+          const today=new Date();
+          const dayOfWeek=date.getDay();
+          const day=this.getDayOfWeekName(dayOfWeek);
+  
+          const isHoliday=this.addEditForm.get('is'+day+'Holiday')?.value;
+  
+          return isHoliday || date < today;
+        }
+      ],
+    };
   }
 }

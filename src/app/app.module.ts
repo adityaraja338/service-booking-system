@@ -16,6 +16,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { AddEditComponent } from './bookings/add-edit/add-edit.component';
 import { ViewComponent } from './bookings/view/view.component';
 import { NgZorroAntdModule } from './ng-zorro-antd.module';
+import { FlatpickrModule } from 'angularx-flatpickr';
 
 registerLocaleData(en);
 
@@ -35,6 +36,7 @@ registerLocaleData(en);
     BrowserAnimationsModule,
     NgZorroAntdModule,
     ReactiveFormsModule,
+    FlatpickrModule.forRoot()
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],

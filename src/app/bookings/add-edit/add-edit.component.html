@@ -166,15 +166,25 @@
       </div>
     </div>
 
-    <div *ngFor="let day of weekdays; index as index" class="weekdays" [class.mt-3]="index !== 0" [class]="day.toLowerCase()">
+    <div
+      *ngFor="let day of weekdays; index as index"
+      class="weekdays"
+      [class.mt-3]="index !== 0"
+      [class]="day.toLowerCase()"
+    >
       <div class="ant-row">
         <div class="ant-col-xs-24 ant-col-md-20">
-          <label>{{ day || '-'}}</label>
-          <div class="ant-row" [formArrayName]="day.toLowerCase()+'Slots'">
+          <label>{{ day || "-" }}</label>
+          <div class="ant-row" [formArrayName]="day.toLowerCase() + 'Slots'">
             <div
-              *ngFor="let item of this[day.toLowerCase()+'Slots']?.controls; let i = index"
+              *ngFor="
+                let item of this[day.toLowerCase() + 'Slots']?.controls;
+                let i = index
+              "
               [formGroupName]="i"
-              [class.mr-4]="i + 1 !== this[day.toLowerCase()+'Slots'].controls.length"
+              [class.mr-4]="
+                i + 1 !== this[day.toLowerCase() + 'Slots'].controls.length
+              "
               class="mt-xxs-2 mt-md-0"
             >
               <div class="ant-row ant-row-middle">
@@ -183,7 +193,7 @@
                     <p class="slot-hour-select-label">Hour</p>
                     <nz-select
                       class="slot-hour-select"
-                      [(ngModel)]="this['slots'+ day][i].startHour"
+                      [(ngModel)]="this['slots' + day][i].startHour"
                       [nzShowArrow]="false"
                       formControlName="startHour"
                       nzPlaceHolder="00"
@@ -201,7 +211,7 @@
                     <p class="slot-minute-select-label">Minute</p>
                     <nz-select
                       class="slot-minute-select"
-                      [(ngModel)]="this['slots'+ day][i].startMinute"
+                      [(ngModel)]="this['slots' + day][i].startMinute"
                       [nzShowArrow]="false"
                       formControlName="startMinute"
                       nzPlaceHolder="00"
@@ -222,7 +232,7 @@
                     <p class="slot-hour-select-label">Hour</p>
                     <nz-select
                       class="slot-hour-select"
-                      [(ngModel)]="this['slots'+ day][i].endHour"
+                      [(ngModel)]="this['slots' + day][i].endHour"
                       [nzShowArrow]="false"
                       formControlName="endHour"
                       nzPlaceHolder="00"
@@ -240,7 +250,7 @@
                     <p class="slot-minute-select-label">Minute</p>
                     <nz-select
                       class="slot-minute-select"
-                      [(ngModel)]="this['slots'+ day][i].endMinute"
+                      [(ngModel)]="this['slots' + day][i].endMinute"
                       [nzShowArrow]="false"
                       formControlName="endMinute"
                       nzPlaceHolder="00"
@@ -266,31 +276,42 @@
             </div>
           </div>
           <button
-            *ngIf="!addEditForm.get('is'+day+'Holiday')?.value"
+            *ngIf="!addEditForm.get('is' + day + 'Holiday')?.value"
             (click)="addSlot(day)"
             type="button"
             class="my-2 py-1 px-2 add-slot-button"
           >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
+            <span nz-icon nzType="plus" nzTheme="outline" class="mr-1"></span> Add Slot
           </button>
         </div>
         <div class="ant-col-xs-24 ant-col-md-4">
           <div class="ant-row ant-steps-vertical">
             <label
               nz-checkbox
-              [formControlName]="'is'+day+'Holiday'"
+              [formControlName]="'is' + day + 'Holiday'"
               (ngModelChange)="setHoliday(day, $event)"
               >Holiday</label
             >
             <label
               nz-checkbox
-              [formControlName]="'is'+day+'24'"
+              [formControlName]="'is' + day + '24'"
               (ngModelChange)="set24hours(day, $event)"
               >24 Hours</label
             >
           </div>
         </div>
       </div>
+    </div>
+
+    <div>
+      <label class="main-label mt-4 mb-2">Select Holidays</label>
+      <input
+        type="text"
+        mwlFlatpickr
+        [options]="flatpickrOptions"
+        altInputClass="d-none"
+        (flatpickrChange)="selectHoliday($event)"
+      />
     </div>
   </div>
 </form>

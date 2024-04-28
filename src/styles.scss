@@ -3,6 +3,84 @@
 @import url("../src/assets/scss/layouting.css");
 //@import url("../src/assets/scss/margin-padding.scss");
 
+// font family
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend Deca';
+  src: url('../src/assets/fonts/LexendDeca-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+// font family end
+* :not(.fa, .fas, .far) {
+  font-family: 'Lexend Deca', sans-serif !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -16,13 +94,23 @@ p {
 button{
   background: transparent;
   border:none;
+  outline:none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &:hover{
     cursor:pointer;
   }
+  &:focus{
+    box-shadow: 0 0 2px 2px #1890ff55;
+  }
 }
 
-input.ant-input {
-  border-radius: 4px !important;
+input{
+  font-size: 12px;
+  &.ant-input {
+    border-radius: 4px !important;
+  }
 }
 
 nz-select-top-control {
@@ -68,12 +156,27 @@ label.ant-checkbox-wrapper {
   margin: 0 !important;
 }
 
+.flatpickr-day.selected{
+  background:#1890ff;
+  border-color: #1890ff;
+}
+
 label.select-label {
   font-size: 10px;
   font-weight: 600;
-  margin-bottom: 0!important;
+  margin-bottom: 0;
+}
+
+label.main-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0;
 }
 
 .ant-form-item{
   margin: 0;
+}
+
+.invisible{
+  visibility: hidden;
 }
