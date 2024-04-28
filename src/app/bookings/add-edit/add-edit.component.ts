@@ -16,6 +16,16 @@ export class AddEditComponent {
   hours: number[] = [];
   minutes: number[] = [];
 
+  weekdays: string[] = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
   slotsSunday: any = [];
   slotsMonday: any = [];
   slotsTuesday: any = [];
@@ -24,10 +34,7 @@ export class AddEditComponent {
   slotsFriday: any = [];
   slotsSaturday: any = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private message: NzMessageService,
-  ) {
+  constructor(private fb: FormBuilder, private message: NzMessageService) {
     this.addEditForm = this.fb.group({
       name: ['', Validators.required],
       durationDay: [0, Validators.required],
@@ -99,233 +106,9 @@ export class AddEditComponent {
     return this.addEditForm.get('saturdaySlots') as FormArray;
   }
 
-  // addSundaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.sundaySlots?.at(this.sundaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsSunday[this.slotsSunday.length - 1]?.endHour === 23 &&
-  //       this.slotsSunday[this.slotsSunday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.sundaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsSunday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addMondaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.mondaySlots?.at(this.mondaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsMonday[this.slotsMonday.length - 1]?.endHour === 23 &&
-  //       this.slotsMonday[this.slotsMonday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.mondaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsMonday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addTuesdaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.tuesdaySlots?.at(this.tuesdaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsTuesday[this.slotsTuesday.length - 1]?.endHour === 23 &&
-  //       this.slotsTuesday[this.slotsTuesday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.tuesdaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsTuesday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addWednesdaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.wednesdaySlots?.at(this.wednesdaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsWednesday[this.slotsWednesday.length - 1]?.endHour === 23 &&
-  //       this.slotsWednesday[this.slotsWednesday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.wednesdaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsWednesday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addThursdaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.thursdaySlots?.at(this.thursdaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsThursday[this.slotsThursday.length - 1]?.endHour === 23 &&
-  //       this.slotsThursday[this.slotsThursday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.thursdaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsThursday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addFridaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.fridaySlots?.at(this.fridaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsFriday[this.slotsFriday.length - 1]?.endHour === 23 &&
-  //       this.slotsFriday[this.slotsFriday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.fridaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsFriday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-  //
-  // addSaturdaySlot() {
-  //   // this.sundaySlots.length;
-  //   // console.log(this.sundaySlots?.at(this.sundaySlots.length - 1));
-  //   let previousSlot = this.saturdaySlots?.at(this.saturdaySlots.length - 1);
-  //   if (!previousSlot || previousSlot?.valid) {
-  //     if (
-  //       this.slotsSaturday[this.slotsSaturday.length - 1]?.endHour === 23 &&
-  //       this.slotsSaturday[this.slotsSaturday.length - 1]?.endMinute === 59
-  //     ) {
-  //       this.message.error('Cannot add slot after 23:59!');
-  //       return;
-  //     }
-  //     this.saturdaySlots.push(
-  //       this.fb.group({
-  //         startHour: [null, Validators.required],
-  //         startMinute: [null, Validators.required],
-  //         endHour: [null, Validators.required],
-  //         endMinute: [null, Validators.required],
-  //       }),
-  //     );
-  //     this.slotsSaturday.push({
-  //       startHour: null,
-  //       startMinute: null,
-  //       endHour: null,
-  //       endMinute: null,
-  //     });
-  //     // console.log(this.slotsSunday);
-  //   } else {
-  //     this.message.error('Fill the current slot details!');
-  //   }
-  // }
-
   addSlot(day: string): void {
     let previousSlot = this[day.toLowerCase() + 'Slots']?.at(
-      this[day.toLowerCase() + 'Slots'].length - 1,
+      this[day.toLowerCase() + 'Slots'].length - 1
     );
     if (!previousSlot || previousSlot?.valid) {
       if (
@@ -341,7 +124,7 @@ export class AddEditComponent {
           startMinute: [null, Validators.required],
           endHour: [null, Validators.required],
           endMinute: [null, Validators.required],
-        }),
+        })
       );
       this['slots' + day]?.push({
         startHour: null,
@@ -371,7 +154,7 @@ export class AddEditComponent {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
-          'differentStartMinuteValue',
+          'differentStartMinuteValue'
         )?.value;
 
         // If previous slot's end minute with time difference calculated is
@@ -395,7 +178,7 @@ export class AddEditComponent {
 
     return Array.from(
       { length: currentEndHour - previousEndHour },
-      (_, i) => previousEndHour + i,
+      (_, i) => previousEndHour + i
     );
   }
 
@@ -420,7 +203,7 @@ export class AddEditComponent {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
-          'differentStartMinuteValue',
+          'differentStartMinuteValue'
         )?.value;
 
         // If previous slot's end minute with time difference calculated is
@@ -457,7 +240,7 @@ export class AddEditComponent {
 
     return Array.from(
       { length: currentEndMinute - previousEndMinute },
-      (_, i) => previousEndMinute + i,
+      (_, i) => previousEndMinute + i
     );
   }
 
@@ -488,7 +271,7 @@ export class AddEditComponent {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
-          'differentStartMinuteValue',
+          'differentStartMinuteValue'
         )?.value;
 
         // Reducing the next start hour according to next slot minute difference
@@ -503,7 +286,7 @@ export class AddEditComponent {
 
     return Array.from(
       { length: nextStartHour - currentStartHour },
-      (_, i) => currentStartHour + i,
+      (_, i) => currentStartHour + i
     );
   }
 
@@ -528,7 +311,7 @@ export class AddEditComponent {
         const differenceHour = +this.addEditForm.get('differentStartHourValue')
           ?.value;
         const differenceMinute = +this.addEditForm.get(
-          'differentStartMinuteValue',
+          'differentStartMinuteValue'
         )?.value;
 
         // Reducing the next start hour according to next slot minute difference
@@ -568,7 +351,7 @@ export class AddEditComponent {
 
     return Array.from(
       { length: currentEndMinute - currentStartMinute },
-      (_, i) => currentStartMinute + i,
+      (_, i) => currentStartMinute + i
     );
   }
 
@@ -602,7 +385,7 @@ export class AddEditComponent {
           startMinute: [0, Validators.required],
           endHour: [23, Validators.required],
           endMinute: [59, Validators.required],
-        }),
+        })
       );
       this['slots' + day] = [
         {
@@ -620,7 +403,7 @@ export class AddEditComponent {
           startMinute: [null, Validators.required],
           endHour: [null, Validators.required],
           endMinute: [null, Validators.required],
-        }),
+        })
       );
       this['slots' + day] = [
         {

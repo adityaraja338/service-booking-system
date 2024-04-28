@@ -1,6 +1,6 @@
 <form [formGroup]="addEditForm" nz-form>
   <div
-    class="my-4 ant-col-xs-22 ant-col-md-20 ant-col-xs-offset-1 ant-col-md-offset-2"
+    class="py-4 ant-col-xs-22 ant-col-md-20 ant-col-xs-offset-1 ant-col-md-offset-2"
   >
     <div class="ant-row ant-row-middle">
       <div class="ant-col-xs-24 ant-col-md-8 ant-col-lg-6">
@@ -166,15 +166,15 @@
       </div>
     </div>
 
-    <div class="weekdays sunday">
+    <div *ngFor="let day of weekdays; index as index" class="weekdays sunday" [class.mt-3]="index !== 0">
       <div class="ant-row">
         <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Sunday</label>
-          <div class="ant-row" formArrayName="sundaySlots">
+          <label>{{ day || '-'}}</label>
+          <div class="ant-row" [formArrayName]="day.toLowerCase()+'Slots'">
             <div
-              *ngFor="let item of sundaySlots?.controls; let i = index"
+              *ngFor="let item of this[day.toLowerCase()+'Slots']?.controls; let i = index"
               [formGroupName]="i"
-              [class.mr-4]="i + 1 !== sundaySlots.controls.length"
+              [class.mr-4]="i + 1 !== this[day.toLowerCase()+'Slots'].controls.length"
               class="mt-xxs-2 mt-md-0"
             >
               <div class="ant-row ant-row-middle">
@@ -183,7 +183,7 @@
                     <p class="slot-hour-select-label">Hour</p>
                     <nz-select
                       class="slot-hour-select"
-                      [(ngModel)]="slotsSunday[i].startHour"
+                      [(ngModel)]="this['slots'+ day][i].startHour"
                       [nzShowArrow]="false"
                       formControlName="startHour"
                       nzPlaceHolder="00"
@@ -191,7 +191,7 @@
                       nzShowSearch
                     >
                       <nz-option
-                        *ngFor="let hour of getHourStartSlots('Sunday', i)"
+                        *ngFor="let hour of getHourStartSlots(day, i)"
                         [nzLabel]="hour"
                         [nzValue]="hour"
                       ></nz-option>
@@ -201,7 +201,7 @@
                     <p class="slot-minute-select-label">Minute</p>
                     <nz-select
                       class="slot-minute-select"
-                      [(ngModel)]="slotsSunday[i].startMinute"
+                      [(ngModel)]="this['slots'+ day][i].startMinute"
                       [nzShowArrow]="false"
                       formControlName="startMinute"
                       nzPlaceHolder="00"
@@ -209,7 +209,7 @@
                       nzShowSearch
                     >
                       <nz-option
-                        *ngFor="let minute of getMinuteStartSlots('Sunday', i)"
+                        *ngFor="let minute of getMinuteStartSlots(day, i)"
                         [nzLabel]="minute"
                         [nzValue]="minute"
                       ></nz-option>
@@ -222,7 +222,7 @@
                     <p class="slot-hour-select-label">Hour</p>
                     <nz-select
                       class="slot-hour-select"
-                      [(ngModel)]="slotsSunday[i].endHour"
+                      [(ngModel)]="this['slots'+ day][i].endHour"
                       [nzShowArrow]="false"
                       formControlName="endHour"
                       nzPlaceHolder="00"
@@ -230,7 +230,7 @@
                       nzShowSearch
                     >
                       <nz-option
-                        *ngFor="let hour of getHourEndSlots('Sunday', i)"
+                        *ngFor="let hour of getHourEndSlots(day, i)"
                         [nzLabel]="hour"
                         [nzValue]="hour"
                       ></nz-option>
@@ -240,7 +240,7 @@
                     <p class="slot-minute-select-label">Minute</p>
                     <nz-select
                       class="slot-minute-select"
-                      [(ngModel)]="slotsSunday[i].endMinute"
+                      [(ngModel)]="this['slots'+ day][i].endMinute"
                       [nzShowArrow]="false"
                       formControlName="endMinute"
                       nzPlaceHolder="00"
@@ -248,7 +248,7 @@
                       nzShowSearch
                     >
                       <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Sunday', i)"
+                        *ngFor="let minute of getMinuteEndSlots(day, i)"
                         [nzLabel]="minute"
                         [nzValue]="minute"
                       ></nz-option>
@@ -257,7 +257,7 @@
                 </div>
                 <button
                   type="button"
-                  (click)="deleteSlot('Sunday', i)"
+                  (click)="deleteSlot(day, i)"
                   class="delete-slot-btn"
                 >
                   <span nz-icon nzType="delete" nzTheme="fill"></span>
@@ -266,8 +266,8 @@
             </div>
           </div>
           <button
-            *ngIf="!addEditForm.get('isSundayHoliday')?.value"
-            (click)="addSlot('Sunday')"
+            *ngIf="!addEditForm.get('is'+day+'Holiday')?.value"
+            (click)="addSlot(day)"
             type="button"
             class="my-2 py-1 px-2 add-slot-button"
           >
@@ -278,781 +278,14 @@
           <div class="ant-row ant-steps-vertical">
             <label
               nz-checkbox
-              formControlName="isSundayHoliday"
-              (ngModelChange)="setHoliday('Sunday', $event)"
+              [formControlName]="'is'+day+'Holiday'"
+              (ngModelChange)="setHoliday(day, $event)"
               >Holiday</label
             >
             <label
               nz-checkbox
-              formControlName="isSunday24"
-              (ngModelChange)="set24hours('Sunday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays monday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Monday</label>
-          <div class="ant-row" formArrayName="mondaySlots">
-            <div
-              *ngFor="let item of mondaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== mondaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsMonday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Monday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsMonday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteStartSlots('Monday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsMonday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Monday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsMonday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Monday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Monday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isMondayHoliday')?.value"
-            (click)="addSlot('Monday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isMondayHoliday"
-              (ngModelChange)="setHoliday('Monday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isMonday24"
-              (ngModelChange)="set24hours('Monday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays tuesday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Tuesday</label>
-          <div class="ant-row" formArrayName="tuesdaySlots">
-            <div
-              *ngFor="let item of tuesdaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== tuesdaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsTuesday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Tuesday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsTuesday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderlessnzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteStartSlots('Tuesday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsTuesday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Tuesday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsTuesday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Tuesday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Tuesday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isTuesdayHoliday')?.value"
-            (click)="addSlot('Tuesday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isTuesdayHoliday"
-              (ngModelChange)="setHoliday('Tuesday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isTuesday24"
-              (ngModelChange)="set24hours('Tuesday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays wednesday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Wednesday</label>
-          <div class="ant-row" formArrayName="wednesdaySlots">
-            <div
-              *ngFor="let item of wednesdaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== wednesdaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsWednesday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Wednesday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsWednesday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="
-                          let minute of getMinuteStartSlots('Wednesday', i)
-                        "
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsWednesday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Wednesday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsWednesday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Wednesday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Wednesday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isWednesdayHoliday')?.value"
-            (click)="addSlot('Wednesday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isWednesdayHoliday"
-              (ngModelChange)="setHoliday('Wednesday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isWednesday24"
-              (ngModelChange)="set24hours('Wednesday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays thursday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Thursday</label>
-          <div class="ant-row" formArrayName="thursdaySlots">
-            <div
-              *ngFor="let item of thursdaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== thursdaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsThursday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Thursday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsThursday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="
-                          let minute of getMinuteStartSlots('Thursday', i)
-                        "
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsThursday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Thursday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsThursday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Thursday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Thursday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isThursdayHoliday')?.value"
-            (click)="addSlot('Thursday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isThursdayHoliday"
-              (ngModelChange)="setHoliday('Thursday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isThursday24"
-              (ngModelChange)="set24hours('Thursday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays friday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Friday</label>
-          <div class="ant-row" formArrayName="fridaySlots">
-            <div
-              *ngFor="let item of fridaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== fridaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsFriday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Friday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsFriday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteStartSlots('Friday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsFriday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Friday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsFriday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Friday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Friday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isFridayHoliday')?.value"
-            (click)="addSlot('Friday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isFridayHoliday"
-              (ngModelChange)="setHoliday('Friday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isFriday24"
-              (ngModelChange)="set24hours('Friday', $event)"
-              >24 Hours</label
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weekdays saturday mt-3">
-      <div class="ant-row">
-        <div class="ant-col-xs-24 ant-col-md-20">
-          <label>Saturday</label>
-          <div class="ant-row" formArrayName="saturdaySlots">
-            <div
-              *ngFor="let item of saturdaySlots?.controls; let i = index"
-              [formGroupName]="i"
-              [class.mr-4]="i + 1 !== saturdaySlots.controls.length"
-              class="mt-xxs-2 mt-md-0"
-            >
-              <div class="ant-row ant-row-middle">
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsSaturday[i].startHour"
-                      [nzShowArrow]="false"
-                      formControlName="startHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourStartSlots('Saturday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsSaturday[i].startMinute"
-                      [nzShowArrow]="false"
-                      formControlName="startMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="
-                          let minute of getMinuteStartSlots('Saturday', i)
-                        "
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <span class="slot-separator">-</span>
-                <div class="ant-row">
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-hour-select-label">Hour</p>
-                    <nz-select
-                      class="slot-hour-select"
-                      [(ngModel)]="slotsSaturday[i].endHour"
-                      [nzShowArrow]="false"
-                      formControlName="endHour"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let hour of getHourEndSlots('Saturday', i)"
-                        [nzLabel]="hour"
-                        [nzValue]="hour"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                  <div class="ant-row ant-steps-vertical">
-                    <p class="slot-minute-select-label">Minute</p>
-                    <nz-select
-                      class="slot-minute-select"
-                      [(ngModel)]="slotsSaturday[i].endMinute"
-                      [nzShowArrow]="false"
-                      formControlName="endMinute"
-                      nzPlaceHolder="00"
-                      nzBorderless
-                      nzShowSearch
-                    >
-                      <nz-option
-                        *ngFor="let minute of getMinuteEndSlots('Saturday', i)"
-                        [nzLabel]="minute"
-                        [nzValue]="minute"
-                      ></nz-option>
-                    </nz-select>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="deleteSlot('Saturday', i)"
-                  class="delete-slot-btn"
-                >
-                  <span nz-icon nzType="delete" nzTheme="fill"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            *ngIf="!addEditForm.get('isSaturdayHoliday')?.value"
-            (click)="addSlot('Saturday')"
-            type="button"
-            class="my-2 py-1 px-2 add-slot-button"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span> Add Slot
-          </button>
-        </div>
-        <div class="ant-col-xs-24 ant-col-md-4">
-          <div class="ant-row ant-steps-vertical">
-            <label
-              nz-checkbox
-              formControlName="isSaturdayHoliday"
-              (ngModelChange)="setHoliday('Saturday', $event)"
-              >Holiday</label
-            >
-            <label
-              nz-checkbox
-              formControlName="isSaturday24"
-              (ngModelChange)="set24hours('Saturday', $event)"
+              [formControlName]="'is'+day+'24'"
+              (ngModelChange)="set24hours(day, $event)"
               >24 Hours</label
             >
           </div>
